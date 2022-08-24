@@ -1,23 +1,27 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>CodeHelper.Core.Database.SqlServer</RootNamespace>
     <ApplicationIcon>CodeHelper-Logo.ico</ApplicationIcon>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Description>CodeHelper.Core.Database.SqlServer is a modern lightweight database mapper for .NET
 Reduce the code and map easily your stored procedures to a object, set value of an object from the database, get lists from database and more...</Description>
+	  <summary>
+		  A modern lightweight database mapper for .NET
+		  Reduce the code and map easily your stored procedures to a object, set value of an object from the database, get lists from database and more.
+	  </summary>
     <Copyright>MIT License</Copyright>
     <PackageIcon>CodeHelper-Logo.jpg</PackageIcon>
 	  <RepositoryUrl>https://github.com/frederikvanlierde/CodeHelper.Core.Database.SqlServer</RepositoryUrl>
 	  <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>.net core</PackageTags>
-	  <PackageVersion>1.0.0.0</PackageVersion>
+	  <PackageVersion>6.0.2.0</PackageVersion>
 	  <RepositoryType>git</RepositoryType>
-	  <AssemblyVersion>1.0.0.0</AssemblyVersion>
-	  <FileVersion>1.0.0.0</FileVersion>
-	  <Version>1.0.0</Version>
+	  <AssemblyVersion>6.0.2.0</AssemblyVersion>
+	  <FileVersion>6.0.2.0</FileVersion>
+	  <Version>6.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,7 +42,7 @@ Reduce the code and map easily your stored procedures to a object, set value of 
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="Microsoft.Data.SqlClient" Version="4.1.0" />
+	<PackageReference Include="Microsoft.Data.SqlClient" Version="5.0.0" />
   </ItemGroup>
 
 </Project>
