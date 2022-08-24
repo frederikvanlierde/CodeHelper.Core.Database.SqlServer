@@ -21,10 +21,10 @@ namespace CodeHelper.Core.Database.SqlServer
         public static void GetData(this object MyObject, string DBConnString, string storedProcedure, object[] parameters)
         {
             GetDBConnString(ref DBConnString);
-            using SqlConnection connection = new SqlConnection(DBConnString);
+            using SqlConnection connection = new(DBConnString);
             connection.Open();
 
-            using SqlCommand command = new SqlCommand() { CommandText = storedProcedure, Connection = connection, CommandType = CommandType.StoredProcedure };
+            using SqlCommand command = new () { CommandText = storedProcedure, Connection = connection, CommandType = CommandType.StoredProcedure };
             command.AddParameters(parameters);
 
             SqlDataReader reader = command.ExecuteReader();
@@ -63,7 +63,54 @@ namespace CodeHelper.Core.Database.SqlServer
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Execute the Delete Stored Procedure, using the fields who has IsKey property of the DBField Attribute set to true
+        /// Mutliple fields can have IsKey set to true, the delete function will use all of them.
+        /// Ex. Delete Order, Key is OrderID AND CustomerID (even in the Database, the primary key is only OrderID
+        /// </summary>
+        /// <param name="MyObject">object: Object to be saved</param>
+        /// <param name="DBConnString">string: The database connectionstring</param>
+        /// <param name="storedProcedure">string: The Stored Procedure Name, include the schema  (ex. dbo.UserInfoSave)</param>
+        /// <returns>object: The methods will execute a Scalar operation, return a field value and place it into the right MyObject Property (Ex. the newly saved ID) (can be null)</returns>
+        public static void Delete(this object MyObject, string DBConnString)
+        {
+            GetDBConnString(ref DBConnString);
+            DBInfo _dbInfo = (DBInfo)MyObject.GetType().GetCustomAttribute(typeof(DBInfo), false);
+            if (_dbInfo != null && !string.IsNullOrEmpty(_dbInfo.DeleteSP))
+                Database.Delete (MyObject, DBConnString, _dbInfo.DeleteSP);                
+        }
+        /// <summary>
+        /// Saves the given object into the database, using the given storedprocedure.
+        /// The methods can base used as extension of an object or as a static methods
+        /// </summary>
+        /// <param name="MyObject">object: Object to be saved</param>
+        /// <param name="DBConnString">string: The database connectionstring</param>
+        /// <param name="storedProcedure">string: The Stored Procedure Name, include the schema  (ex. dbo.UserInfoSave)</param>
+        /// <returns>object: The methods will execute a Scalar operation, return a field (Ex. the newly saved ID) (can be null)</returns>
+        public static object Delete(this object MyObject, string DBConnString, string storedProcedure)
+        {
+            GetDBConnString(ref DBConnString);
+            object _returnValue = null;
+            if (MyObject != null)
+            {
+                using SqlConnection connection = new(DBConnString);
+                connection.Open();
+
+                using SqlCommand command = new() { CommandText = storedProcedure, Connection = connection, CommandType = CommandType.StoredProcedure };
+
+                foreach (PropertyInfo property in MyObject.GetType().GetProperties())
+                {
+                    DBFieldAttribute p = property.DBField();
+                    if (p != null && p.IsKey)
+                        command.Parameters.Add(new SqlParameter(p.FieldName, property.GetValue(MyObject)));
+                }
+                _returnValue = command.ExecuteScalar();
+                connection.Close();
+            }
+            return _returnValue;
+        }
+
         /// <summary>
         /// Saves the given object into the database, using the given storedprocedure.
         /// The methods can base used as extension of an object or as a static methods
@@ -78,10 +125,10 @@ namespace CodeHelper.Core.Database.SqlServer
             object _returnValue = null;
             if (MyObject != null)
             {
-                using SqlConnection connection = new SqlConnection(DBConnString);
+                using SqlConnection connection = new(DBConnString);
                 connection.Open();
 
-                using SqlCommand command = new SqlCommand() { CommandText = storedProcedure, Connection = connection, CommandType = CommandType.StoredProcedure };
+                using SqlCommand command = new() { CommandText = storedProcedure, Connection = connection, CommandType = CommandType.StoredProcedure };
 
                 foreach (PropertyInfo property in MyObject.GetType().GetProperties())
                 {
@@ -96,15 +143,15 @@ namespace CodeHelper.Core.Database.SqlServer
         }
 
 
-        public static List<object> GetList(Type objectType, string DBConnString, string storedProcedure, string[] parameters, bool addEmptyObject = false)
+        public static List<object> GetList(Type objectType, string DBConnString, string storedProcedure, object[] parameters, bool addEmptyObject = false)
         {
             GetDBConnString(ref DBConnString);
             var list = new List<object>();
 
-            using SqlConnection connection = new SqlConnection(DBConnString);
+            using SqlConnection connection = new(DBConnString);
             connection.Open();
 
-            using SqlCommand command = new SqlCommand() { CommandText = storedProcedure, Connection = connection, CommandType = CommandType.StoredProcedure };
+            using SqlCommand command = new() { CommandText = storedProcedure, Connection = connection, CommandType = CommandType.StoredProcedure };
             command.AddParameters(parameters);
 
             SqlDataReader reader = command.ExecuteReader();
@@ -128,14 +175,14 @@ namespace CodeHelper.Core.Database.SqlServer
         }
 
         
-        public static object ExecuteScalar(string storedProcedure, string DBConnString, string[] parameters)
+        public static object ExecuteScalar(string storedProcedure, string DBConnString, object[] parameters)
         {
             GetDBConnString(ref DBConnString);
 
-            using SqlConnection connection = new SqlConnection(DBConnString);
+            using SqlConnection connection = new(DBConnString);
             connection.Open();
 
-            using SqlCommand command = new SqlCommand() { CommandText = storedProcedure, Connection = connection, CommandType = CommandType.StoredProcedure };
+            using SqlCommand command = new() { CommandText = storedProcedure, Connection = connection, CommandType = CommandType.StoredProcedure };
             command.AddParameters(parameters);
 
             object _returnValue = command.ExecuteScalar();                

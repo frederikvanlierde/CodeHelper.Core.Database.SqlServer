@@ -1,6 +1,12 @@
-# CodeHelper.Core.Database.SqlServer
+﻿# CodeHelper.Core.Database.SqlServer
 CodeHelper.Core.Database.SqlServer is a modern lightweight database mapper for .NET
 Reduce the code and map easily your stored procedures to a object, set value of an object from the database, get lists from database and more....
+
+## Versions
+6.0.2 : .net6 : Generic Delete function has been added (backwards compatibl). See documentation to link KeyFields
+6.0.1 : .net6
+5.0.0 : .net5
+1.0.0 : .net Core 3.1
 
 ## Easy explanation
 1. Give a property in your Class a DBField Name
